@@ -1,0 +1,29 @@
+{
+  "name": "reactmg",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start_api": "json-server --watch db.json --port 3001",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "fs": "^0.0.1-security",
+    "json-server": "^1.0.0-beta.2",
+    "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
+    "md5": "^2.3.0",
+    "mysql": "^2.18.1",
+    "nodemailer": "^6.9.15"
+  },
+  "devDependencies": {
+    "json-server": "^1.0.0-beta.3"
+  }
+}

@@ -1,0 +1,443 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "admin123",
+      "apellido": "perez",
+      "email": "edpsantii328@gmail.com",
+      "contraseña": "25d55ad283aa400af464c76d713c07ad",
+      "role": "admin",
+      "password": "$2a$10$b8KriJfjYcBlcfrW7gCt1OUvofWXfUWDmxju3ID5F/557VgpuJG06",
+      "tarjetasDeCredito": {
+        "tarjeta1": {
+          "numero": "32321",
+          "nombre": "dsds",
+          "fechaVencimiento": "2024-10-31",
+          "codigoSeguridad": "321321"
+        }
+      },
+      "telefonos": {
+        "telefono1": "321321321321"
+      }
+    },
+    {
+      "id": "229d",
+      "username": "santiago",
+      "apellido": "delgado",
+      "email": "santiago@gmail.com",
+      "password": "25d55ad283aa400af464c76d713c07ad",
+      "role": "user"
+    },
+    {
+      "id": "2084",
+      "username": "katherin",
+      "apellido": "Villota",
+      "email": "kathyp.ramirez@gmail.com",
+      "password": "$2a$10$R/CtXq1W0c9zmqkOifQI/uz8OYlsPImFgiZppOrCB3fCGsUY1GtfK",
+      "role": "user"
+    }
+  ],
+  "products": [
+    {
+      "id": "679d",
+      "name": "Sala 5 Puestos ",
+      "material": "madera triplex",
+      "estilo": "Moderno",
+      "tela": "Sofá de terciopelo",
+      "acabado": "Mate",
+      "color": "Azul Marino",
+      "tapizMaterial": "Tela",
+      "materialInterno": "Espuma",
+      "precio": 100000,
+      "descripcion": "Sala para 5 personas estilo moderno, muy comodo para la familia.",
+      "requiereArmado": "no",
+      "alto": "120",
+      "ancho": "300",
+      "profundidad": "300",
+      "pesoNeto": "30",
+      "autor": "admin123",
+      "cantidad": 23,
+      "categoria": "Mueble",
+      "imagenes": {
+        "imagen1": "https://i.ibb.co/Wc6xz62/mueble9.jpg",
+        "imagen2": "https://i.ibb.co/Wc6xz62/mueble9.jpg",
+        "imagen3": "https://i.ibb.co/Wc6xz62/mueble9.jpg",
+        "imagen4": "https://i.ibb.co/Wc6xz62/mueble9.jpg",
+        "model3D": "33c9ae7ed8d84bde893969a4aa60ac16"
+      },
+      "userId": 1
+    },
+    {
+      "id": "9028",
+      "name": "Sala 4 Puestos Sencilla",
+      "material": "tela",
+      "estilo": "Rústico",
+      "tela": "Telabonita",
+      "acabado": "Mate",
+      "color": "Blanco",
+      "tapizMaterial": "Tela",
+      "materialInterno": "Espuma",
+      "precio": 120000,
+      "descripcion": "Un sofá cama versátil que combina elegancia y funcionalidad. Perfecto para espacios modernos.",
+      "requiereArmado": "Sí",
+      "alto": "100",
+      "ancho": "250",
+      "profundidad": "200",
+      "pesoNeto": "35",
+      "autor": "admin123",
+      "cantidad": 50,
+      "categoria": "Mueble",
+      "imagenes": {
+        "imagen1": "https://i.ibb.co/rF0zgd1/mueble8.jpg",
+        "imagen2": "https://i.ibb.co/rF0zgd1/mueble8.jpg",
+        "imagen3": "https://i.ibb.co/rF0zgd1/mueble8.jpg",
+        "imagen4": "https://i.ibb.co/rF0zgd1/mueble8.jpg",
+        "model3D": "33c9ae7ed8d84bde893969a4aa60ac16"
+      },
+      "userId": 1
+    },
+    {
+      "id": "9029",
+      "name": "Sala Modular de Lujo",
+      "material": "Contrachapado",
+      "estilo": "Contemporáneo",
+      "tela": "Lino",
+      "acabado": "Brillante",
+      "color": "Madera",
+      "tapizMaterial": "Cuero",
+      "materialInterno": "Contrachapado",
+      "precio": 450000,
+      "descripcion": "Este sofá modular se adapta a cualquier configuración y ofrece un confort excepcional.",
+      "requiereArmado": "No",
+      "alto": "90",
+      "ancho": "300",
+      "profundidad": "250",
+      "pesoNeto": "50",
+      "autor": "admin123",
+      "cantidad": 20,
+      "imagenes": {
+        "imagen1": "https://tugocolombia.vtexassets.com/arquivos/ids/301768-800-auto?v=638609810755330000&width=800&height=auto&aspect=true",
+        "imagen2": "https://tugocolombia.vtexassets.com/arquivos/ids/301770-800-auto?v=638609810766270000&width=800&height=auto&aspect=true",
+        "imagen3": "https://tugocolombia.vtexassets.com/arquivos/ids/301771-800-auto?v=638609810770430000&width=800&height=auto&aspect=true",
+        "imagen4": "https://tugocolombia.vtexassets.com/arquivos/ids/301774-800-auto?v=638609810785870000&width=800&height=auto&aspect=true",
+        "model3D": "1a15815a1420498681a5888ddbd0652b"
+      },
+      "userId": 1
+    },
+    {
+      "id": "9030",
+      "name": "Sofá Cama Moderno En L",
+      "material": "Contrachapado",
+      "estilo": "Moderno",
+      "tela": "Telabonita",
+      "acabado": "Brillante",
+      "color": "Gris",
+      "tapizMaterial": "Tela",
+      "materialInterno": "Espuma",
+      "precio": 300000,
+      "descripcion": "Un sofá cama elegante y funcional que se adapta a cualquier espacio.",
+      "requiereArmado": "Sí",
+      "alto": "90",
+      "ancho": "210",
+      "profundidad": "100",
+      "pesoNeto": "50",
+      "autor": "admin123",
+      "cantidad": 20,
+      "categoria": "Mueble",
+      "imagenes": {
+        "imagen1": "https://tugocolombia.vtexassets.com/arquivos/ids/273048-800-auto?v=638193348157300000&width=800&height=auto&aspect=true",
+        "imagen2": "https://tugocolombia.vtexassets.com/arquivos/ids/273049-800-auto?v=638193348162570000&width=800&height=auto&aspect=true",
+        "imagen3": "https://tugocolombia.vtexassets.com/arquivos/ids/273126-800-auto?v=638195208847000000&width=800&height=auto&aspect=true",
+        "imagen4": "https://tugocolombia.vtexassets.com/arquivos/ids/273050-800-auto?v=638193348166870000&width=800&height=auto&aspect=true",
+        "model3D": "d05970ba117446bd945bbef42361e546"
+      },
+      "userId": 1
+    },
+    {
+      "id": "9031",
+      "name": "Sofá Esquinero de Cuero",
+      "material": "Contrachapado",
+      "estilo": "Contemporáneo",
+      "tela": "Cuero",
+      "acabado": "Brillante",
+      "color": "Negro",
+      "tapizMaterial": "Tela",
+      "materialInterno": "Espuma",
+      "precio": 450000,
+      "descripcion": "Un sofá esquinero que añade un toque de elegancia a tu sala.",
+      "requiereArmado": "No",
+      "alto": "85",
+      "ancho": "250",
+      "profundidad": "200",
+      "pesoNeto": "70",
+      "autor": "admin123",
+      "cantidad": 15,
+      "categoria": "Mueble",
+      "imagenes": {
+        "imagen1": "https://i.ibb.co/89hsVXJ/mueble3.jpg"
+      },
+      "userId": 1
+    },
+    {
+      "id": "9032",
+      "name": "Sala Sencilla En Tela 5 Personas",
+      "material": "tela",
+      "estilo": "Rústico",
+      "tela": "Telabonita",
+      "acabado": "Mate",
+      "color": "Azul Marino",
+      "tapizMaterial": "Tela",
+      "materialInterno": "Espuma",
+      "precio": 250000,
+      "descripcion": "Un sofá chaise longue que ofrece estilo y confort, ideal para relajarse.",
+      "requiereArmado": "Sí",
+      "alto": "85",
+      "ancho": "240",
+      "profundidad": "160",
+      "pesoNeto": "38",
+      "autor": "admin123",
+      "cantidad": 25,
+      "categoria": "Mueble",
+      "imagenes": {
+        "imagen1": "https://i.ibb.co/3YyBjYK/mueble2.jpg"
+      },
+      "userId": 1
+    },
+    {
+      "id": "9033",
+      "name": "Sofá De Tres Plazas Vintage",
+      "material": "Contrachapado",
+      "estilo": "Rústico",
+      "tela": "Lino",
+      "acabado": "Transparente",
+      "color": "Blanco",
+      "tapizMaterial": "Cuero",
+      "materialInterno": "Espuma",
+      "precio": 180000,
+      "descripcion": "Un sofá de dos plazas que revive el encanto del diseño vintage.",
+      "requiereArmado": "No",
+      "alto": "90",
+      "ancho": "180",
+      "profundidad": "90",
+      "pesoNeto": "30",
+      "autor": "admin123",
+      "cantidad": 40,
+      "categoria": "Mueble",
+      "imagenes": {
+        "imagen1": "https://i.ibb.co/s5HqCvJ/mueble12.jpg"
+      },
+      "userId": 1
+    },
+    {
+      "id": "9034",
+      "name": "Sofá 2 Plazas En Tela",
+      "material": "Contrachapado",
+      "estilo": "Rústico",
+      "tela": "Telabonita",
+      "acabado": "Transparente",
+      "color": "Azul Marino",
+      "tapizMaterial": "Tela",
+      "materialInterno": "Contrachapado",
+      "precio": 220000,
+      "descripcion": "Sofá futón que combina funcionalidad y tradición japonesa.",
+      "requiereArmado": "Sí",
+      "alto": "75",
+      "ancho": "200",
+      "profundidad": "140",
+      "pesoNeto": "25",
+      "autor": "admin123",
+      "cantidad": 35,
+      "categoria": "Mueble",
+      "imagenes": {
+        "imagen1": "https://i.ibb.co/MCdWp3f/mueble11.jpg"
+      },
+      "userId": 1
+    },
+    {
+      "id": "9036",
+      "name": "Sala Con Silla Mecedora",
+      "material": "tela",
+      "estilo": "Rústico",
+      "acabado": "Mate",
+      "color": "Madera",
+      "precio": 600000,
+      "descripcion": "Mesa de comedor amplia, perfecta para reuniones familiares.",
+      "requiereArmado": "Sí",
+      "alto": "75",
+      "ancho": "200",
+      "profundidad": "100",
+      "pesoNeto": "90",
+      "autor": "admin123",
+      "cantidad": 15,
+      "categoria": "Mueble",
+      "imagenes": {
+        "imagen1": "https://i.ibb.co/4YqYNwn/mueble10.jpg"
+      },
+      "userId": 1,
+      "tela": "Cuero",
+      "tapizMaterial": "Tela",
+      "materialInterno": "Espuma"
+    },
+    {
+      "id": "9037",
+      "name": "Mesa De Vidrio 6 Puestos",
+      "material": "tela",
+      "estilo": "Moderno",
+      "color": "Negro",
+      "precio": 150000,
+      "descripcion": "Silla ergonómica que ofrece confort y soporte para largas horas de trabajo.",
+      "requiereArmado": "Sí",
+      "alto": "100",
+      "ancho": "60",
+      "profundidad": "60",
+      "pesoNeto": "12",
+      "autor": "admin123",
+      "cantidad": 30,
+      "categoria": "Mueble",
+      "imagenes": {
+        "imagen1": "https://i.ibb.co/grhNbvw/mueble1.jpg"
+      },
+      "userId": 1,
+      "tela": "Telabonita",
+      "acabado": "Mate",
+      "tapizMaterial": "Cuero",
+      "materialInterno": "Espuma"
+    }
+  ],
+  "purchases": [
+    {
+      "id": "6e50",
+      "user": {
+        "IdUser": "229d",
+        "nombre": "santiago",
+        "email": "santiago@gmail.com",
+        "telefono": "21312312",
+        "direccion": "3213213131",
+        "ciudad": "bogota",
+        "codigoPostal": "3121321",
+        "tarjeta": "231312",
+        "vencimiento": "321321321",
+        "cvv": "321321"
+      },
+      "products": {
+        "product1": {
+          "productId": "679d",
+          "cantidad": 8,
+          "precio": 100000,
+          "userId": 1,
+          "autor": "admin123"
+        }
+      }
+    },
+    {
+      "id": "0839",
+      "user": {
+        "IdUser": "1",
+        "nombre": "admin123",
+        "email": "edpsantii328@gmail.com",
+        "telefono": "321312313",
+        "direccion": "dadadsa",
+        "ciudad": "dsdsadas",
+        "codigoPostal": "3321312",
+        "tarjeta": "321312312",
+        "vencimiento": "321321312",
+        "cvv": "321321312"
+      },
+      "products": {
+        "product1": {
+          "productId": "679d",
+          "cantidad": 4,
+          "precio": 100000,
+          "userId": 1,
+          "autor": "admin123"
+        }
+      }
+    },
+    {
+      "id": "1c24",
+      "user": {
+        "IdUser": "1",
+        "nombre": "admin123",
+        "email": "edpsantii328@gmail.com",
+        "telefono": "321321321321",
+        "direccion": "wrerwe",
+        "ciudad": "rwrewrew",
+        "codigoPostal": "rewrwr",
+        "tarjeta": "12345678912345",
+        "vencimiento": "2024-10-31",
+        "cvv": "321"
+      },
+      "products": {
+        "product1": {
+          "productId": "679d",
+          "cantidad": 5,
+          "precio": 100000,
+          "userId": 1,
+          "autor": "admin123"
+        }
+      }
+    }
+  ],
+  "productos": [
+    {
+      "id": "1",
+      "nombre": "Sillón Relax",
+      "imagen": "https://www.ahorrototal.com/3011180-home_default/sillon-relax-pushback-reclinable-boom-color-moka.jpg",
+      "unidades": 120
+    },
+    {
+      "id": "2",
+      "nombre": "Mesa de Comedor 4 puestos",
+      "imagen": "https://bodegadelmueble.com/wp-content/uploads/grecia-natural-700x467.jpg",
+      "unidades": 80
+    },
+    {
+      "id": "3",
+      "nombre": "Cama King Size",
+      "imagen": "https://http2.mlstatic.com/D_NQ_NP_853439-MCO76762720313_062024-O.webp",
+      "unidades": 60
+    }
+  ],
+  "ventas": {
+    "categorias": [
+      {
+        "categoria": "Comedores 6 puestos",
+        "ventas": 150
+      },
+      {
+        "categoria": "Escritorios",
+        "ventas": 100
+      },
+      {
+        "categoria": " Base Camas",
+        "ventas": 90
+      }
+    ],
+    "ganancias": [
+      {
+        "mes": "Enero",
+        "ganancia": 23000000
+      },
+      {
+        "mes": "Febrero",
+        "ganancia": 12000000
+      },
+      {
+        "mes": "Marzo",
+        "ganancia": 3500000
+      },
+      {
+        "mes": "Abril",
+        "ganancia": 6000000
+      },
+      {
+        "mes": "Mayo",
+        "ganancia": 42000000
+      },
+      {
+        "mes": "Junio",
+        "ganancia": 8000000
+      }
+    ]
+  }
+}
