@@ -12,18 +12,16 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "dotenv": "^16.4.5",
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.3",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.21.1",
-    "fs": "^0.0.1-security",
     "json-server": "^1.0.0-beta.2",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "md5": "^2.3.0",
     "mysql": "^2.18.1",
-    "nodemailer": "^6.9.15"
+    "nodemailer": "^6.9.16"
   },
   "devDependencies": {
     "json-server": "^1.0.0-beta.3"
