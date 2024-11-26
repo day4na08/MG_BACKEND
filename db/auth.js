@@ -349,6 +349,22 @@ app.get("/llamarProductos/:userId",(req,res)=>{
 
 });
 
+
+//leer productos :)
+app.get("/Catalogo",(req,res)=>{
+  
+    conexion.query('SELECT * FROM productos',
+        (err,result)=>{
+        if(err){
+        console.log(err);
+        }else{
+        res.send(result);
+    }
+    }
+    )
+
+});
+
 //productdetail
 app.get("/llamarProducto/:id", (req, res) => {
     const id = req.params.id;
