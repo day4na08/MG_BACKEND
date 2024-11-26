@@ -145,11 +145,9 @@ app.delete('/deletePhone/:id', (req, res) => {
             }
         }
         );
-    
 });
 
-
-// Obtener tarjetas de crédito por usuario
+// Obtener tarjeta de crédito por usuario
 app.get('/creditCards/:userId', (req, res) => {
     const userId = req.params.userId;
     const query = 'SELECT * FROM credit_cards WHERE user_id = ?';
