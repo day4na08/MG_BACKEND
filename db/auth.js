@@ -5,7 +5,7 @@ const mysql = require('mysql');
 const md5 = require('md5');
 const cors = require('cors');
 const { sendResetEmail } = require('./testEmail'); // Importa la función
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5001;
 
 app.use(express.json());
 app.use(cors());
@@ -86,6 +86,131 @@ app.get('/users/:id', (req, res) => {
             res.status(404).send('Usuario no encontrado');
         }
     });
+});
+// Obtener nuemros de telefono por usuario
+app.get('/phones/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const query = 'SELECT * FROM phones WHERE user_id = ?';
+    conexion.query(query, [userId], (err, results) => {
+        if (err) return res.status(500).send('Error al obtener las tarjetas');
+        res.json(results);
+    });
+});
+
+// Agregar nueva numero
+app.post('/createphone', (req, res) => {
+    const { user_id, telefono } = req.body;
+    conexion.query('INSERT INTO phones(user_id, telefono) VALUES(?,? )',[user_id, telefono],
+        (err,result)=>{
+        if(err){
+        console.log(err);
+        }else{
+        res.send("Usuario registrado con éxito!!");
+    }
+    }
+    )
+});
+
+
+app.put('/updatephone', (req, res) => {
+    const id = req.body.id;
+    const { telefono } = req.body;
+
+    conexion.query(
+        'UPDATE phones SET telefono=? WHERE id=?',
+        [telefono, id],
+        (err, result) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send("Hubo un error al actualizar la tarjeta de crédito.");
+            } else {
+                res.send("¡Tarjeta actualizada con éxito!");
+            }
+        }
+    );
+});
+
+
+
+app.delete('/deletePhone/:id', (req, res) => {
+    const id = req.params.id;
+    conexion.query('DELETE FROM phones WHERE id=? ',[id],
+
+        (err,result)=>{
+            if(err){
+                console.log(err);
+    
+            }else{
+                res.send(result);
+            }
+        }
+        );
+    
+});
+
+
+// Obtener tarjetas de crédito por usuario
+app.get('/creditCards/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const query = 'SELECT * FROM credit_cards WHERE user_id = ?';
+    conexion.query(query, [userId], (err, results) => {
+        if (err) return res.status(500).send('Error al obtener las tarjetas');
+        res.json(results);
+    });
+});
+
+// Agregar nueva tarjeta de crédito
+app.post('/createCreditCard', (req, res) => {
+    const { user_id, numero, nombre, fecha_vencimiento, codigo_seguridad } = req.body;
+    conexion.query('INSERT INTO credit_cards(user_id, numero,nombre,fecha_vencimiento,codigo_seguridad) VALUES(?,?,?,?,?)',[user_id, numero,nombre,fecha_vencimiento,codigo_seguridad],
+        (err,result)=>{
+        if(err){
+        console.log(err);
+        }else{
+        res.send("Usuario registrado con éxito!!");
+    }
+    }
+    )
+});
+
+// Actualizar tarjeta de crédito
+app.put('/updateCreditCard', (req, res) => {
+    const id = req.body.id;
+    const numero = req.body.numero;
+    const nombre = req.body.nombre;
+    const fecha_vencimiento = req.body.fecha_vencimiento;
+    const codigo_seguridad = req.body.codigo_seguridad;
+
+    conexion.query(
+        'UPDATE credit_cards SET numero=?, nombre=?, fecha_vencimiento=?, codigo_seguridad=? WHERE id=?',
+        [numero, nombre, fecha_vencimiento, codigo_seguridad, id],
+        (err, result) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send("Hubo un error al actualizar la tarjeta de crédito.");
+            } else {
+                res.send("¡Tarjeta actualizada con éxito!");
+            }
+        }
+    );
+});
+
+
+// Eliminar tarjeta de crédito
+app.delete('/deleteCreditCard/:id', (req, res) => {
+    const id = req.params.id;
+    conexion.query('DELETE FROM credit_cards WHERE id=? ',[id],
+
+        (err,result)=>{
+            if(err){
+                console.log(err);
+    
+            }else{
+                res.send(result);
+            }
+        }
+        );
+    
 });
 
 //CRUD usuarios
@@ -200,9 +325,10 @@ app.post('/productos', (req, res) => {
     const imagen3 = req.body.imagen3
     const imagen4 = req.body.imagen4
     const imagen3D = req.body.imagen3D
+    const userId = req.body.userId
 
-    conexion.query('INSERT INTO productos (name, material, estilo, tela, acabado, color, tapizMaterial, materialInterno, precio, descripcion, requiereArmado, alto, ancho, profundidad, pesoNeto, cantidad, autor, imagen1, imagen2, imagen3, imagen4, imagen3D) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-        [name, material, estilo, tela, acabado, color, tapizMaterial, materialInterno, precio, descripcion, requiereArmado, alto, ancho, profundidad, pesoNeto, cantidad, autor, imagen1, imagen2, imagen3, imagen4, imagen3D],
+    conexion.query('INSERT INTO productos (name, material, estilo, tela, acabado, color, tapizMaterial, materialInterno, precio, descripcion, requiereArmado, alto, ancho, profundidad, pesoNeto, cantidad, autor, imagen1, imagen2, imagen3, imagen4, imagen3D, userId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+        [name, material, estilo, tela, acabado, color, tapizMaterial, materialInterno, precio, descripcion, requiereArmado, alto, ancho, profundidad, pesoNeto, cantidad, autor, imagen1, imagen2, imagen3, imagen4, imagen3D, userId],
     (err,result)=>{
         if(err){
             console.log(err);
@@ -215,21 +341,17 @@ app.post('/productos', (req, res) => {
 });
 
 //leer productos :)
-app.get("/llamarProductos",(req,res)=>{
+app.get("/llamarProductos/:userId",(req,res)=>{
+    const userId = req.params.userId;
+    const query = 'SELECT * FROM productos WHERE userId = ?';
+    conexion.query(query, [userId], (err, results) => {
+        if (err) return res.status(500).send('Error al obtener las tarjetas');
+        res.json(results);
+    });
 
-    conexion.query('SELECT * FROM productos',
-        (err,result)=>{
-            if(err){
-                console.log(err);
+});
 
-            }else{
-                res.send(result)
-            }
-        }
-    )    
-})
-
-
+//productdetail
 app.get("/llamarProducto/:id", (req, res) => {
     const id = req.params.id;
 
