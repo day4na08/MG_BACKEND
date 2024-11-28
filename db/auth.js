@@ -325,10 +325,9 @@ app.put("/updateUser", (req, res) => {
     const email = req.body.email;
     const contrasena = req.body.contrasena;
     const role = req.body.role;
-    const hashedPassword = md5(contrasena); // Contraseña encriptada
 
     conexion.query('UPDATE usuarios SET username = ?, apellido = ?, email = ?, contrasena = ?, role = ? WHERE id = ?', 
-    [username, apellido, email, hashedPassword, role, id], 
+    [username, apellido, email, contrasena, role, id], 
     (err, result) => {
         if (err) {
             console.log(err);
