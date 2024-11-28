@@ -87,6 +87,48 @@ app.get('/users/:id', (req, res) => {
         }
     });
 });
+
+// Ruta para actualizar el correo electrónico
+app.put('/users/updateEmail', (req, res) => {
+    const { userId, newEmail } = req.body;
+  
+    const query = 'UPDATE usuarios SET email = ? WHERE id = ?';
+    conexion.query(query, [newEmail, userId], (err, results) => {
+      if (err) {
+        return res.status(500).send('Error al actualizar el correo electrónico');
+      }
+      res.status(200).send('Correo electrónico actualizado con éxito');
+    });
+  });
+  
+  // Ruta para actualizar la contraseña
+  app.put('/updatePassword', (req, res) => {
+    const { userId, currentPassword, newPassword } = req.body;
+  
+    // Primero verificar si la contraseña actual es correcta
+    const checkPasswordQuery = 'SELECT contrasena FROM usuarios WHERE id = ?';
+    conexion.query(checkPasswordQuery, [userId], (err, results) => {
+      if (err) return res.status(500).send('Error en la base de datos');
+      if (results.length > 0) {
+        const hashedCurrentPassword = md5(currentPassword);
+        if (results[0].contrasena === hashedCurrentPassword) {
+          // Si la contraseña es correcta, actualizar la contraseña
+          const hashedNewPassword = md5(newPassword);
+          const updatePasswordQuery = 'UPDATE usuarios SET contrasena = ? WHERE id = ?';
+          conexion.query(updatePasswordQuery, [hashedNewPassword, userId], (err) => {
+            if (err) return res.status(500).send('Error al actualizar la contraseña');
+            res.status(200).send('Contraseña actualizada con éxito');
+          });
+        } else {
+          res.status(400).send('La contraseña actual es incorrecta');
+        }
+      } else {
+        res.status(404).send('Usuario no encontrado');
+      }
+    });
+  });
+  
+
 // Obtener nuemros de telefono por usuario
 app.get('/phones/:userId', (req, res) => {
     const userId = req.params.userId;
@@ -96,11 +138,25 @@ app.get('/phones/:userId', (req, res) => {
         res.json(results);
     });
 });
+// Obtener números de teléfono por usuario
+app.get('/phoneUser/:user_id', (req, res) => {
+    const user_id = req.params.user_id;  // Obtenemos el ID del usuario desde los parámetros de la URL
+    const query = 'SELECT telefono FROM phones WHERE user_id = ? AND estado = "activo"';  // Filtramos por userId y estado
+    conexion.query(query, [user_id], (err, results) => {
+      if (err) return res.status(500).send('Error al obtener el telefono');
+      if (results.length > 0) {
+        res.json(results[0]);  // Enviamos solo el primer teléfono encontrado
+      } else {
+        res.status(404).send('Teléfono no encontrado');
+      }
+    });
+  });
+  
 
 // Agregar nueva numero
 app.post('/createphone', (req, res) => {
-    const { user_id, telefono } = req.body;
-    conexion.query('INSERT INTO phones(user_id, telefono) VALUES(?,? )',[user_id, telefono],
+    const { user_id, telefono, estado } = req.body;
+    conexion.query('INSERT INTO phones(user_id, telefono, estado) VALUES(?,?,?)',[user_id, telefono, estado],
         (err,result)=>{
         if(err){
         console.log(err);
@@ -114,11 +170,12 @@ app.post('/createphone', (req, res) => {
 
 app.put('/updatephone', (req, res) => {
     const id = req.body.id;
-    const { telefono } = req.body;
+    const { telefono, estado } = req.body;
+
 
     conexion.query(
-        'UPDATE phones SET telefono=? WHERE id=?',
-        [telefono, id],
+        'UPDATE phones SET telefono=?, estado=? WHERE id=?',
+        [telefono,estado, id],
         (err, result) => {
             if (err) {
                 console.log(err);
@@ -145,6 +202,26 @@ app.delete('/deletePhone/:id', (req, res) => {
             }
         }
         );
+});
+app.put('/updatePhoneStatus', (req, res) => {
+    const { user_id, phone_id } = req.body;
+
+    // Primero, desactivar todos los teléfonos
+    conexion.query('UPDATE phones SET estado = "inactivo" WHERE user_id = ?', [user_id], (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).send("Hubo un error al desactivar los teléfonos.");
+        }
+
+        // Ahora, activar el teléfono seleccionado
+        conexion.query('UPDATE phones SET estado = "activo" WHERE id = ?', [phone_id], (err, result) => {
+            if (err) {
+                console.log(err);
+                return res.status(500).send("Hubo un error al activar el teléfono.");
+            }
+            res.send("Estado del teléfono actualizado con éxito.");
+        });
+    });
 });
 
 // Obtener tarjeta de crédito por usuario
@@ -218,11 +295,13 @@ app.post("/createUser",(req,res)=>{
     const username = req.body.username;
     const apellido = req.body.apellido;
     const email = req.body.email;
-    const contrasena = req.body.contrasena;
+    const contrasena =req.body.contrasena;
     const role = req.body.role;
+    const hashedPassword = md5(contrasena);
 
 
-    conexion.query('INSERT INTO usuarios(username,apellido,email,contrasena,role) VALUES(?,?,?,?,?)',[username,apellido,email,contrasena,role],
+
+    conexion.query('INSERT INTO usuarios(username,apellido,email,contrasena,role) VALUES(?,?,?,?,?)',[username,apellido,email,hashedPassword,role],
         (err,result)=>{
         if(err){
         console.log(err);
@@ -233,30 +312,28 @@ app.post("/createUser",(req,res)=>{
     )
 });
 
-
 //actualizar
-app.put("/updateUser",(req,res)=>{
-
-
+app.put("/updateUser", (req, res) => {
+    const id = req.body.id;  // ID del usuario
     const username = req.body.username;
-    const id = req.body.id;
     const apellido = req.body.apellido;
     const email = req.body.email;
     const contrasena = req.body.contrasena;
     const role = req.body.role;
+    const hashedPassword = md5(contrasena); // Contraseña encriptada
 
-
-    conexion.query('UPDATE usuarios SET username=?, apellido=?,email=?,contrasena=?,role=? WHERE id=? ',
-        [username,apellido,email,contrasena,role,id],
-        (err,result)=>{
-        if(err){
-        console.log(err);
-        }else{
-        res.send("Usuario registrado con éxito!!");
-    }
-    }
-    )
+    conexion.query('UPDATE usuarios SET username = ?, apellido = ?, email = ?, contrasena = ?, role = ? WHERE id = ?', 
+    [username, apellido, email, hashedPassword, role, id], 
+    (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send("Error al actualizar el usuario");
+        } else {
+            res.send("Usuario actualizado con éxito!!");
+        }
+    });
 });
+
 
 //CRUD usuarios
 app.delete('/deleteUser/:id',(req,res)=>{
