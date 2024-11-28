@@ -223,53 +223,58 @@ app.put('/updatePhoneStatus', (req, res) => {
         });
     });
 });
+app.put('/updateCardStatus', (req, res) => {
+    const { user_id, card_id } = req.body;
 
-// Obtener tarjeta de crédito por usuario
-app.get('/creditCards/:userId', (req, res) => {
-    const userId = req.params.userId;
-    const query = 'SELECT * FROM credit_cards WHERE user_id = ?';
-    conexion.query(query, [userId], (err, results) => {
-        if (err) return res.status(500).send('Error al obtener las tarjetas');
-        res.json(results);
+    // Primero, desactivar todos los teléfonos
+    conexion.query('UPDATE credit_cards SET estado = "inactiva" WHERE user_id = ?', [user_id], (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).send("Hubo un error al desactivar los teléfonos.");
+        }
+
+        // Ahora, activar el teléfono seleccionado
+        conexion.query('UPDATE credit_cards SET estado = "activa" WHERE id = ?', [card_id], (err, result) => {
+            if (err) {
+                console.log(err);
+                return res.status(500).send("Hubo un error al activar el teléfono.");
+            }
+            res.send("Estado del teléfono actualizado con éxito.");
+        });
     });
 });
-
 // Agregar nueva tarjeta de crédito
 app.post('/createCreditCard', (req, res) => {
-    const { user_id, numero, nombre, fecha_vencimiento, codigo_seguridad } = req.body;
-    conexion.query('INSERT INTO credit_cards(user_id, numero,nombre,fecha_vencimiento,codigo_seguridad) VALUES(?,?,?,?,?)',[user_id, numero,nombre,fecha_vencimiento,codigo_seguridad],
-        (err,result)=>{
-        if(err){
-        console.log(err);
-        }else{
-        res.send("Usuario registrado con éxito!!");
-    }
-    }
-    )
-});
+    const { user_id, numero, nombre, fecha_vencimiento, codigo_seguridad, estado } = req.body;
 
+    conexion.query('INSERT INTO credit_cards(user_id, numero, nombre, fecha_vencimiento, codigo_seguridad, estado) VALUES(?,?,?,?,?,?)', 
+    [user_id, numero, nombre, fecha_vencimiento, codigo_seguridad, estado], 
+    (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send("Hubo un error al registrar la tarjeta.");
+        } else {
+            res.send("Tarjeta registrada con éxito!");
+        }
+    });
+});
 // Actualizar tarjeta de crédito
 app.put('/updateCreditCard', (req, res) => {
-    const id = req.body.id;
-    const numero = req.body.numero;
-    const nombre = req.body.nombre;
-    const fecha_vencimiento = req.body.fecha_vencimiento;
-    const codigo_seguridad = req.body.codigo_seguridad;
+    const { id, numero, nombre, fecha_vencimiento, codigo_seguridad, estado } = req.body;
 
     conexion.query(
-        'UPDATE credit_cards SET numero=?, nombre=?, fecha_vencimiento=?, codigo_seguridad=? WHERE id=?',
-        [numero, nombre, fecha_vencimiento, codigo_seguridad, id],
+        'UPDATE credit_cards SET numero=?, nombre=?, fecha_vencimiento=?, codigo_seguridad=?, estado=? WHERE id=?',
+        [numero, nombre, fecha_vencimiento, codigo_seguridad, estado, id],
         (err, result) => {
             if (err) {
                 console.log(err);
-                res.status(500).send("Hubo un error al actualizar la tarjeta de crédito.");
+                res.status(500).send("Hubo un error al actualizar la tarjeta.");
             } else {
                 res.send("¡Tarjeta actualizada con éxito!");
             }
         }
     );
 });
-
 
 // Eliminar tarjeta de crédito
 app.delete('/deleteCreditCard/:id', (req, res) => {
