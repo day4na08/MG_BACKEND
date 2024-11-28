@@ -152,7 +152,15 @@ app.get('/phoneUser/:user_id', (req, res) => {
     });
   });
   
-
+// Obtener tarjeta de crédito por usuario
+app.get('/creditCards/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const query = 'SELECT * FROM credit_cards WHERE user_id = ?';
+    conexion.query(query, [userId], (err, results) => {
+        if (err) return res.status(500).send('Error al obtener las tarjetas');
+        res.json(results);
+    });
+});
 // Agregar nueva numero
 app.post('/createphone', (req, res) => {
     const { user_id, telefono, estado } = req.body;
