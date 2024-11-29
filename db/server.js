@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const { sendResetEmail } = require('./testEmail');
 
 const app = express();
-const PORT = 3002;
+const PORT = 5002;
 
 app.use(cors());
 app.use(express.json());

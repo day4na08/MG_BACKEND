@@ -4,8 +4,9 @@
   "main": "index.js",
   "scripts": {
     "start_api": "json-server --watch db.json --port 3001",
-    "start": "node server.js",
-    "start_db": "node ./db/auth.js"
+    "start": "node ./db/server.js",
+    "start_db": "node ./db/auth.js",
+     "start_back": "concurrently \"npm run start\" \"npm run start_db\""
   },
   "keywords": [],
   "author": "",
@@ -24,6 +25,7 @@
     "nodemailer": "^6.9.16"
   },
   "devDependencies": {
+    "concurrently": "^9.1.0",
     "json-server": "^1.0.0-beta.3"
   }
 }
