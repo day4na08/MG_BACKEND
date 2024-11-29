@@ -549,7 +549,7 @@ app.post('/productos2', (req, res) => {
 
 
 // Ruta para restablecer contraseña
-app.post('/api/password/reset', async (req, res) => {
+app.post('/passwordReset', async (req, res) => {
     const { email } = req.body;
 
     const query = 'SELECT * FROM usuarios WHERE email = ?';
@@ -585,7 +585,7 @@ app.post('/api/password/reset', async (req, res) => {
 });
 
 // Ruta para verificar si el token es válido
-app.post('/api/password/verify-token/:token', (req, res) => {
+app.post('/passwordVerify-token/:token', (req, res) => {
     const { token } = req.params;
 
     if (!token) {
@@ -608,7 +608,7 @@ app.post('/api/password/verify-token/:token', (req, res) => {
 });
 
 // Ruta para restablecer la contraseña
-app.post('/api/password/reset/:token', (req, res) => {
+app.post('/passwordReset/:token', (req, res) => {
     const { token } = req.params;
     const { nuevaContraseña } = req.body;
 
