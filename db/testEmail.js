@@ -3,8 +3,8 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'oficialMegamuebles@gmail.com',
-    pass: 'fxsw kcfc xzmm rmur', // Asegúrate de que la contraseña sea correcta
+    user: 'megamuebles249@gmail.com',
+    pass: 'rwdi grhl yobm cqoe', // Asegúrate de que la contraseña sea correcta
   },
 });
 
