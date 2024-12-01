@@ -5,6 +5,7 @@ const mysql = require('mysql');
 const md5 = require('md5');
 const cors = require('cors');
 const { sendResetEmail } = require('./testEmail'); // Importa la función
+const { sendPurchaseConfirmationEmail } = require('./sendbuy'); // Importa la función
 const PORT = process.env.PORT || 5001;
 
 app.use(express.json());
@@ -151,7 +152,28 @@ app.get('/phoneUser/:user_id', (req, res) => {
       }
     });
   });
-  
+    // Obtener números de teléfono por usuario
+    app.get('/CardUser/:user_id', (req, res) => {
+        const user_id = req.params.user_id;  // Obtenemos el ID del usuario desde los parámetros de la URL
+        
+        // Hacemos una consulta que recupere todos los campos relevantes de la tarjeta
+        const query = `
+          SELECT numero, fecha_vencimiento, codigo_seguridad, nombre 
+          FROM credit_cards 
+          WHERE user_id = ? AND estado = "activo"`;
+      
+        conexion.query(query, [user_id], (err, results) => {
+          if (err) {
+            return res.status(500).send('Error al obtener las tarjetas');
+          }
+          if (results.length > 0) {
+            res.json(results[0]);  // Enviamos la primera tarjeta activa encontrada
+          } else {
+            res.status(404).send('No se encontraron tarjetas activas');
+          }
+        });
+      });
+      
 // Obtener tarjeta de crédito por usuario
 app.get('/creditCards/:userId', (req, res) => {
     const userId = req.params.userId;
@@ -526,23 +548,219 @@ app.put('/updateproductos', (req, res) => {
     }
     );
 });
-// Ruta para agregar un nuevo producto2
-app.post('/productos2', (req, res) => {
-    const { name, material, color, precio, descripcion, imagen3D } = req.body;
 
-    conexion.query(
-        'INSERT INTO productos2 (name, material, color, precio, descripcion, imagen3D) VALUES (?, ?, ?, ?, ?, ?)',
-        [name, material, color, precio, descripcion, imagen3D],
+
+
+// Ruta para agregar compras y ventas
+// Ruta para agregar un nuevo cliente
+app.post('/clientes', (req, res) => {
+    const nameUser = req.body.nameUser;
+    const email = req.body.email;
+    const telefono = req.body.telefono;
+    const direccion = req.body.direccion;
+    const ciudad = req.body.ciudad;
+    const codigoPostal = req.body.codigoPostal;
+    const numTargeta = req.body.numTargeta;
+    const vencimientoTargeta = req.body.vencimientoTargeta;
+    const cvv = req.body.cvv;
+    const idCompra = req.body.idCompra;
+
+    // Consulta SQL para insertar un nuevo cliente en la tabla Clientes
+    conexion.query('INSERT INTO Clientes (name_user, email, telefono, direccion, ciudad, codigo_postal, num_targeta, vencimiento_targeta, cvv, id_compra) VALUES (?,?,?,?,?,?,?,?,?,?)',
+        [nameUser, email, telefono, direccion, ciudad, codigoPostal, numTargeta, vencimientoTargeta, cvv, idCompra],
         (err, result) => {
             if (err) {
-                console.log("Error al agregar el mueble:", err);
-                res.status(500).send("Error en el servidor");
+                console.log(err);
+                res.status(500).send('Error al agregar el cliente');
             } else {
-                res.send("Mueble agregado satisfactoriamente :))");
+                res.send("Cliente agregado satisfactoriamente :))");
             }
         }
     );
 });
+
+// Ruta para agregar una nueva compra
+app.post('/compras', (req, res) => {
+    const userId = req.body.userId;
+    const cantComprada = req.body.cantComprada;
+    const precio = req.body.precio;
+    const categoriaProduct = req.body.categoriaProduct;
+    const nameProduct = req.body.nameProduct;
+    const img1Product = req.body.img1Product;
+    const autor = req.body.autor;
+    const productoId = req.body.productoId;
+    const nameUser = req.body.nameUser;
+    const fechaCompra = req.body.fechaCompra;
+
+    conexion.query('INSERT INTO Compras (user_id, cant_comprada, precio, categoria_product, name_product, img1Product, autor, producto_id, name_user, fecha_compra) VALUES (?,?,?,?,?,?,?,?,?,?)',
+        [userId, cantComprada, precio, categoriaProduct, nameProduct, img1Product, autor, productoId, nameUser, fechaCompra],
+        (err, result) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send('Error al agregar la compra');
+            } else {
+                res.send("Compra agregada satisfactoriamente :))");
+            }
+        }
+    );
+});
+const nodemailer = require('nodemailer');
+
+// Configuración del transporte de correo (puedes usar tu propio servicio de correo)
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // O el servicio que estés utilizando
+    auth: {
+        user: 'tucorreo@gmail.com', // Reemplaza con tu correo
+        pass: 'tucontraseña' // Reemplaza con tu contraseña de correo o token de aplicación
+    }
+});
+
+// Función para enviar el correo de confirmación
+const sendPurchaseConfirmationEmail = (userEmail, userName, purchaseDetails) => {
+    const mailOptions = {
+        from: 'tucorreo@gmail.com', // Dirección de correo del remitente
+        to: userEmail, // Correo del destinatario (usuario)
+        subject: 'Confirmación de Compra',
+        html: `
+            <h1>¡Gracias por tu compra, ${userName}!</h1>
+            <p>Hemos recibido tu pedido y lo estamos procesando. Aquí están los detalles de tu compra:</p>
+            <ul>
+                <li><strong>Producto:</strong> ${purchaseDetails.nameProduct}</li>
+                <li><strong>Categoría:</strong> ${purchaseDetails.categoriaProduct}</li>
+                <li><strong>Cantidad:</strong> ${purchaseDetails.cantComprada}</li>
+                <li><strong>Precio total:</strong> $${purchaseDetails.precio * purchaseDetails.cantComprada}</li>
+            </ul>
+            <p>Nos aseguraremos de enviarte una actualización sobre el estado de tu compra pronto.</p>
+            <p>¡Gracias por confiar en nosotros!</p>
+        `
+    };
+
+    return transporter.sendMail(mailOptions);
+};
+
+// Ruta para agregar una nueva compra
+app.post('/addcompra', (req, res) => {
+    const userId = req.body.userId;
+    const cantComprada = req.body.cantComprada;
+    const precio = req.body.precio;
+    const categoriaProduct = req.body.categoriaProduct;
+    const nameProduct = req.body.nameProduct;
+    const img1Product = req.body.img1Product;
+    const autor = req.body.autor;
+    const productoId = req.body.productoId;
+    const nameUser = req.body.nameUser;
+    const emailUser = req.body.email;  // Asegúrate de recibir el correo electrónico del usuario
+    const fechaCompra = req.body.fechaCompra;
+
+    // Insertar la compra en la base de datos
+    conexion.query('INSERT INTO Compras (user_id, cant_comprada, precio, categoria_product, name_product, img1Product, autor, producto_id, name_user, fecha_compra) VALUES (?,?,?,?,?,?,?,?,?,?)',
+        [userId, cantComprada, precio, categoriaProduct, nameProduct, img1Product, autor, productoId, nameUser, fechaCompra],
+        (err, result) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send('Error al agregar la compra');
+            } else {
+                // Preparar los detalles de la compra para enviarlos al correo
+                const purchaseDetails = {
+                    nameProduct,
+                    categoriaProduct,
+                    cantComprada,
+                    precio
+                };
+
+                // Enviar el correo de confirmación
+                sendPurchaseConfirmationEmail(emailUser, nameUser, purchaseDetails)
+                    .then(() => {
+                        res.send("Compra agregada satisfactoriamente y correo de confirmación enviado.");
+                    })
+                    .catch((error) => {
+                        console.error("Error al enviar el correo:", error);
+                        res.status(500).send('Compra agregada, pero no se pudo enviar el correo de confirmación.');
+                    });
+            }
+        }
+    );
+});
+
+// Ruta para agregar una nueva venta
+app.post('/ventas', (req, res) => {
+    const idCompra = req.body.idCompra;
+    const userId = req.body.userId;
+    const cantComprada = req.body.cantComprada;
+    const precioProducto = req.body.precioProducto;
+    const nameProduct = req.body.nameProduct;
+    const categoriaProduct = req.body.categoriaProduct;
+    const img1Product = req.body.img1Product;
+    const autor = req.body.autor;
+    const productoId = req.body.productoId;
+    const nameUser = req.body.nameUser;
+    const fechaCompra = req.body.fechaCompra;
+
+    conexion.query('INSERT INTO Ventas (id_compra, user_id, cant_comprada, precio_produt, name_product, categoria_product, img1Product, autor, producto_id, name_user, fecha_compra) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+        [idCompra, userId, cantComprada, precioProducto, nameProduct, categoriaProduct, img1Product, autor, productoId, nameUser, fechaCompra],
+        (err, result) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send('Error al agregar la venta');
+            } else {
+                res.send("Venta agregada satisfactoriamente :))");
+            }
+        }
+    );
+});
+// Leer compras para un usuario específico
+app.get("/compras/:userId", (req, res) => {
+    const userId = req.params.userId;
+    const query = 'SELECT * FROM Compras WHERE user_id = ?';
+    conexion.query(query, [userId], (err, results) => {
+        if (err) return res.status(500).send('Error al obtener las compras');
+        res.json(results);
+    });
+});
+// Leer ventas para un usuario específico
+app.get("/ventas/:userId", (req, res) => {
+    const userId = req.params.userId;
+    const query = 'SELECT * FROM Ventas WHERE user_id = ?';
+    conexion.query(query, [userId], (err, results) => {
+        if (err) return res.status(500).send('Error al obtener las ventas');
+        res.json(results);
+    });
+});
+
+// Ruta para eliminar una compra
+app.delete('/compras/:idCompra', (req, res) => {
+    const idCompra = req.params.idCompra;
+    const query = 'DELETE FROM Compras WHERE id_compra = ?';
+    
+    conexion.query(query, [idCompra], (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).send('Error al eliminar la compra');
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).send('Compra no encontrada');
+        }
+        res.send('Compra eliminada satisfactoriamente');
+    });
+});
+
+// Ruta para eliminar una venta
+app.delete('/ventas/:idVenta', (req, res) => {
+    const idVenta = req.params.idVenta;
+    const query = 'DELETE FROM Ventas WHERE id_venta = ?';
+    
+    conexion.query(query, [idVenta], (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).send('Error al eliminar la venta');
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).send('Venta no encontrada');
+        }
+        res.send('Venta eliminada satisfactoriamente');
+    });
+});
+
 
 //restablecer contraseña
 

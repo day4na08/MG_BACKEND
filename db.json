@@ -308,7 +308,7 @@
     {
       "id": "6e50",
       "user": {
-        "IdUser": "229d",
+        "IdUser": "4",
         "nombre": "santiago",
         "email": "santiago@gmail.com",
         "telefono": "21312312",
@@ -317,14 +317,15 @@
         "codigoPostal": "3121321",
         "tarjeta": "231312",
         "vencimiento": "321321321",
+        "cantidadComprada": 8,
         "cvv": "321321"
       },
       "products": {
         "product1": {
-          "productId": "679d",
+          "productId": "15",
           "cantidad": 8,
           "precio": 100000,
-          "userId": 1,
+          "userId": 4,
           "autor": "admin123"
         }
       }
