@@ -160,7 +160,7 @@ app.get('/phoneUser/:user_id', (req, res) => {
         const query = `
           SELECT numero, fecha_vencimiento, codigo_seguridad, nombre 
           FROM credit_cards 
-          WHERE user_id = ? AND estado = "activo"`;
+          WHERE user_id = ? AND estado = "activa"`;
       
         conexion.query(query, [user_id], (err, results) => {
           if (err) {
