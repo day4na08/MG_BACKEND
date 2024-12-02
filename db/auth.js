@@ -242,7 +242,6 @@ app.put('/updatePhoneStatus', (req, res) => {
             console.log(err);
             return res.status(500).send("Hubo un error al desactivar los teléfonos.");
         }
-
         // Ahora, activar el teléfono seleccionado
         conexion.query('UPDATE phones SET estado = "activo" WHERE id = ?', [phone_id], (err, result) => {
             if (err) {
@@ -622,8 +621,8 @@ app.post('/addcompra', (req, res) => {
     const fechaCompra = req.body.fechaCompra;
 
     // Insertar la compra en la base de datos
-    conexion.query('INSERT INTO compras (user_id, cant_comprada, authorId, precio, categoria_product, name_product, img1Product, autor, producto_id, name_user, fecha_compra) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
-        [userId, cantComprada, precio, categoriaProduct, nameProduct, img1Product,authorId, autor, productoId, nameUser, fechaCompra],
+    conexion.query('INSERT INTO compras (user_id, cant_comprada, precio, categoria_product, name_product, img1Product, autor, producto_id, name_user, fecha_compra, authorId) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+        [userId, cantComprada, precio, categoriaProduct, nameProduct, img1Product,authorId, autor, productoId, nameUser, fechaCompra, authorId],
         (err, result) => {
             if (err) {
                 console.log(err);
