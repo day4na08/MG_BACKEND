@@ -607,49 +607,61 @@ app.post('/clientes', (req, res) => {
 
 // Ruta para agregar una nueva compra
 app.post('/addcompra', (req, res) => {
-    const userId = req.body.userId;
-    const authorId = req.body.autorId;
-    const cantComprada = req.body.cantComprada;
-    const precio = req.body.precio;
-    const categoriaProduct = req.body.categoriaProduct;
-    const nameProduct = req.body.nameProduct;
-    const img1Product = req.body.img1Product;
-    const autor = req.body.autor;
-    const productoId = req.body.productoId;
-    const nameUser = req.body.nameUser;
-    const emailUser = req.body.email;  // Asegúrate de recibir el correo electrónico del usuario
-    const fechaCompra = req.body.fechaCompra;
+    const {
+        userId,
+        autorId,
+        cantComprada,
+        precio,
+        categoriaProduct,
+        nameProduct,
+        img1Product,
+        autor,
+        productoId,
+        nameUser,
+        email, // Cambié emailUser por email para simplificar
+        fechaCompra
+    } = req.body;
+
+    // Validación de entrada
+    if (!userId || !autorId || !cantComprada || !precio || !categoriaProduct || !nameProduct || !img1Product || !autor || !productoId || !nameUser || !email || !fechaCompra) {
+        return res.status(400).send('Faltan datos obligatorios en la solicitud.');
+    }
 
     // Insertar la compra en la base de datos
-    conexion.query('INSERT INTO compras (user_id, cant_comprada, precio, categoria_product, name_product, img1Product, autor, producto_id, name_user, fecha_compra, authorId) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
-        [userId, cantComprada, precio, categoriaProduct, nameProduct, img1Product,authorId, autor, productoId, nameUser, fechaCompra, authorId],
-        (err, result) => {
-            if (err) {
-                console.log(err);
-                res.status(500).send('Error al agregar la compra');
-            } else {
-                // Preparar los detalles de la compra para enviarlos al correo
-                const purchaseDetails = {
-                    nameProduct,
-                    categoriaProduct,
-                    cantComprada,
-                    precio
-                };
+    const query = `
+        INSERT INTO compras 
+        (user_id, cant_comprada, precio, categoria_product, name_product, img1Product, autor, producto_id, name_user, fecha_compra, authorId) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
 
-                // Enviar el correo de confirmación
-                sendPurchaseConfirmationEmail(emailUser, nameUser, purchaseDetails)
-                    .then(() => {
-                        res.send("Compra agregada satisfactoriamente y correo de confirmación enviado.");
-                    })
-                    .catch((error) => {
-                        console.error("Error al enviar el correo:", error);
-                        res.status(500).send('Compra agregada, pero no se pudo enviar el correo de confirmación.');
-                    });
-            }
+    const values = [userId, cantComprada, precio, categoriaProduct, nameProduct, img1Product, autor, productoId, nameUser, fechaCompra, autorId];
+
+    conexion.query(query, values, (err, result) => {
+        if (err) {
+            console.error("Error al insertar en la base de datos:", err);
+            return res.status(500).send('Error al agregar la compra.');
         }
-    );
-});
 
+        // Preparar los detalles de la compra para enviar el correo
+        const purchaseDetails = {
+            nameProduct,
+            categoriaProduct,
+            cantComprada,
+            precio,
+            fechaCompra,
+        };
+
+        // Enviar el correo de confirmación
+        sendPurchaseConfirmationEmail(email, nameUser, purchaseDetails)
+            .then(() => {
+                res.status(200).send("Compra agregada satisfactoriamente y correo de confirmación enviado.");
+            })
+            .catch((error) => {
+                console.error("Error al enviar el correo:", error);
+                res.status(500).send('Compra agregada, pero no se pudo enviar el correo de confirmación.');
+            });
+    });
+});
 // Ruta para agregar una nueva venta
 app.post('/addventa', (req, res) => {
     const idCompra = req.body.idCompra;
