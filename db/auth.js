@@ -552,33 +552,6 @@ app.put('/updateproductos', (req, res) => {
 
 
 // Ruta para agregar compras y ventas
-// Ruta para agregar un nuevo cliente
-app.post('/clientes', (req, res) => {
-    const nameUser = req.body.nameUser;
-    const email = req.body.email;
-    const telefono = req.body.telefono;
-    const direccion = req.body.direccion;
-    const ciudad = req.body.ciudad;
-    const codigoPostal = req.body.codigoPostal;
-    const numTargeta = req.body.numTargeta;
-    const vencimientoTargeta = req.body.vencimientoTargeta;
-    const cvv = req.body.cvv;
-    const idCompra = req.body.idCompra;
-
-    // Consulta SQL para insertar un nuevo cliente en la tabla Clientes
-    conexion.query('INSERT INTO Clientes (name_user, email, telefono, direccion, ciudad, codigo_postal, num_targeta, vencimiento_targeta, cvv, id_compra) VALUES (?,?,?,?,?,?,?,?,?,?)',
-        [nameUser, email, telefono, direccion, ciudad, codigoPostal, numTargeta, vencimientoTargeta, cvv, idCompra],
-        (err, result) => {
-            if (err) {
-                console.log(err);
-                res.status(500).send('Error al agregar el cliente');
-            } else {
-                res.send("Cliente agregado satisfactoriamente :))");
-            }
-        }
-    );
-});
-
 // Ruta para agregar una nueva compra
 app.post('/compras', (req, res) => {
     const userId = req.body.userId;
@@ -604,10 +577,39 @@ app.post('/compras', (req, res) => {
         }
     );
 });
+// Ruta para agregar un nuevo cliente
+app.post('/clientes', (req, res) => {
+    const nameUser = req.body.nameUser;
+    const email = req.body.email;
+    const telefono = req.body.telefono;
+    const direccion = req.body.direccion;
+    const ciudad = req.body.ciudad;
+    const codigoPostal = req.body.codigoPostal;
+    const numTargeta = req.body.numTargeta;
+    const vencimientoTargeta = req.body.vencimientoTargeta;
+    const cvv = req.body.cvv;
+    const idCompra = req.body.idCompra;
+
+    // Consulta SQL para insertar un nuevo cliente en la tabla Clientes
+    conexion.query('INSERT INTO clientes (name_user, email, telefono, direccion, ciudad, codigo_postal, num_targeta, vencimiento_targeta, cvv, id_compra) VALUES (?,?,?,?,?,?,?,?,?,?)',
+        [nameUser, email, telefono, direccion, ciudad, codigoPostal, numTargeta, vencimientoTargeta, cvv, idCompra],
+        (err, result) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send('Error al agregar el cliente');
+            } else {
+                res.send("Cliente agregado satisfactoriamente :))");
+            }
+        }
+    );
+});
+
+
 
 // Ruta para agregar una nueva compra
 app.post('/addcompra', (req, res) => {
     const userId = req.body.userId;
+    const authorId = req.body.autorId;
     const cantComprada = req.body.cantComprada;
     const precio = req.body.precio;
     const categoriaProduct = req.body.categoriaProduct;
@@ -620,8 +622,8 @@ app.post('/addcompra', (req, res) => {
     const fechaCompra = req.body.fechaCompra;
 
     // Insertar la compra en la base de datos
-    conexion.query('INSERT INTO Compras (user_id, cant_comprada, precio, categoria_product, name_product, img1Product, autor, producto_id, name_user, fecha_compra) VALUES (?,?,?,?,?,?,?,?,?,?)',
-        [userId, cantComprada, precio, categoriaProduct, nameProduct, img1Product, autor, productoId, nameUser, fechaCompra],
+    conexion.query('INSERT INTO compras (user_id, cant_comprada, authorId, precio, categoria_product, name_product, img1Product, autor, producto_id, name_user, fecha_compra) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+        [userId, cantComprada, precio, categoriaProduct, nameProduct, img1Product,authorId, autor, productoId, nameUser, fechaCompra],
         (err, result) => {
             if (err) {
                 console.log(err);
@@ -650,9 +652,10 @@ app.post('/addcompra', (req, res) => {
 });
 
 // Ruta para agregar una nueva venta
-app.post('/ventas', (req, res) => {
+app.post('/addventa', (req, res) => {
     const idCompra = req.body.idCompra;
     const userId = req.body.userId;
+    const authorId = req.body.autorId;
     const cantComprada = req.body.cantComprada;
     const precioProducto = req.body.precioProducto;
     const nameProduct = req.body.nameProduct;
@@ -663,8 +666,8 @@ app.post('/ventas', (req, res) => {
     const nameUser = req.body.nameUser;
     const fechaCompra = req.body.fechaCompra;
 
-    conexion.query('INSERT INTO Ventas (id_compra, user_id, cant_comprada, precio_produt, name_product, categoria_product, img1Product, autor, producto_id, name_user, fecha_compra) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
-        [idCompra, userId, cantComprada, precioProducto, nameProduct, categoriaProduct, img1Product, autor, productoId, nameUser, fechaCompra],
+    conexion.query('INSERT INTO ventas (id_compra, authorId, user_id, cant_comprada, precio_produt, name_product, categoria_product, img1Product, autor, producto_id, name_user, fecha_compra) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
+        [idCompra, userId, cantComprada, precioProducto, nameProduct, categoriaProduct, img1Product, autor, productoId, nameUser, fechaCompra, authorId],
         (err, result) => {
             if (err) {
                 console.log(err);
