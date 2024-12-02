@@ -622,19 +622,14 @@ app.post('/addcompra', (req, res) => {
         fechaCompra
     } = req.body;
 
-    // Validación de entrada
-    if (!userId || !autorId || !cantComprada || !precio || !categoriaProduct || !nameProduct || !img1Product || !autor || !productoId || !nameUser || !email || !fechaCompra) {
-        return res.status(400).send('Faltan datos obligatorios en la solicitud.');
-    }
-
     // Insertar la compra en la base de datos
     const query = `
         INSERT INTO compras 
-        (user_id, cant_comprada, precio, categoria_product, name_product, img1Product, autor, producto_id, name_user, fecha_compra, authorId) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (user_id, cant_comprada, precio, categoria_product, name_product, img1Product, autor, producto_id, name_user, fecha_compra, email_user, authorId) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    const values = [userId, cantComprada, precio, categoriaProduct, nameProduct, img1Product, autor, productoId, nameUser, fechaCompra, autorId];
+    const values = [userId, cantComprada, precio, categoriaProduct, nameProduct, img1Product, autor, productoId, nameUser, fechaCompra, email, autorId];
 
     conexion.query(query, values, (err, result) => {
         if (err) {
@@ -662,11 +657,9 @@ app.post('/addcompra', (req, res) => {
             });
     });
 });
-// Ruta para agregar una nueva venta
 app.post('/addventa', (req, res) => {
-    const idCompra = req.body.idCompra;
     const userId = req.body.userId;
-    const authorId = req.body.autorId;
+    const autorId = req.body.autorId;  // Cambié 'authorId' a 'autorId' para que coincida con el nombre del cuerpo de la solicitud
     const cantComprada = req.body.cantComprada;
     const precioProducto = req.body.precioProducto;
     const nameProduct = req.body.nameProduct;
@@ -677,8 +670,9 @@ app.post('/addventa', (req, res) => {
     const nameUser = req.body.nameUser;
     const fechaCompra = req.body.fechaCompra;
 
-    conexion.query('INSERT INTO ventas (id_compra, authorId, user_id, cant_comprada, precio_produt, name_product, categoria_product, img1Product, autor, producto_id, name_user, fecha_compra) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
-        [idCompra, userId, cantComprada, precioProducto, nameProduct, categoriaProduct, img1Product, autor, productoId, nameUser, fechaCompra, authorId],
+    conexion.query(
+        'INSERT INTO ventas (user_id, cant_comprada, precio_produt, name_product, categoria_product, img1Product, autor, producto_id, name_user, fecha_compra, authorId) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+        [userId, cantComprada, precioProducto, nameProduct, categoriaProduct, img1Product, autor, productoId, nameUser, fechaCompra, autorId],
         (err, result) => {
             if (err) {
                 console.log(err);
@@ -689,6 +683,7 @@ app.post('/addventa', (req, res) => {
         }
     );
 });
+
 // Leer compras para un usuario específico
 app.get("/compras/:userId", (req, res) => {
     const userId = req.params.userId;
@@ -743,9 +738,14 @@ app.delete('/ventas/:idVenta', (req, res) => {
 });
 
 
-//restablecer contraseña
 
 
+app.get('/getprodutscard/:id', async (req, res) => {
+    const { id } = req.params;
+    const producto = await pool.query('SELECT * FROM productos WHERE id = ?', [id]);
+    res.json(producto[0]);
+  });
+  //restablecer contraseña
 
 // Ruta para restablecer contraseña
 app.post('/passwordReset', async (req, res) => {

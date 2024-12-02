@@ -4,19 +4,19 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
     service: 'gmail', // O el servicio que estés utilizando
     auth: {
-        user: 'tucorreo@gmail.com', // Reemplaza con tu correo
-        pass: 'tucontraseña' // Reemplaza con tu contraseña de correo o token de aplicación
+        user: 'megamuebles249@gmail.com', // Reemplaza con tu correo
+        pass: 'rwdi grhl yobm cqoe' // Reemplaza con tu contraseña de correo o token de aplicación
     }
 });
 
 // Función para enviar el correo de confirmación
-const sendPurchaseConfirmationEmail = (userEmail, userName, purchaseDetails) => {
+const sendPurchaseConfirmationEmail = (email, nameUser, purchaseDetails) => {
     const mailOptions = {
-        from: 'tucorreo@gmail.com', // Dirección de correo del remitente
-        to: userEmail, // Correo del destinatario (usuario)
+        from: 'megamuebles249@gmail.com', // Dirección de correo del remitente
+        to: email, // Correo del destinatario (usuario)
         subject: 'Confirmación de Compra',
         html: `
-            <h1>¡Gracias por tu compra, ${userName}!</h1>
+            <h1>¡Gracias por tu compra, ${nameUser}!</h1>
             <p>Hemos recibido tu pedido y lo estamos procesando. Aquí están los detalles de tu compra:</p>
             <ul>
                 <li><strong>Producto:</strong> ${purchaseDetails.nameProduct}</li>
@@ -31,3 +31,4 @@ const sendPurchaseConfirmationEmail = (userEmail, userName, purchaseDetails) => 
 
     return transporter.sendMail(mailOptions);
 };
+module.exports = { sendPurchaseConfirmationEmail };

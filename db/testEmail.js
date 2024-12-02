@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
 
 const sendResetEmail = async (email, resetLink) => {
     const mailOptions = {
-      from: 'oficialMegamuebles@gmail.com',
+      from: 'megamuebles249@gmail.com',
       to: email,
       subject: 'Restablecimiento de Contraseña - Mega Muebles',
       html: `
