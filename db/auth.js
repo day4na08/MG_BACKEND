@@ -687,12 +687,17 @@ app.post('/addventa', (req, res) => {
 // Leer compras para un usuario específico
 app.get("/compras/:userId", (req, res) => {
     const userId = req.params.userId;
-    const query = 'SELECT * FROM Compras WHERE user_id = ?';
+    const query = 'SELECT * FROM compras WHERE user_id = ?';
     conexion.query(query, [userId], (err, results) => {
-        if (err) return res.status(500).send('Error al obtener las compras');
+        if (err) {
+            console.error("Error en la consulta:", err.message); // Agregar mensaje de error más detallado
+            return res.status(500).send('Error al obtener las compras');
+        }
         res.json(results);
     });
 });
+
+
 // Leer ventas para un usuario específico
 app.get("/ventas/:userId", (req, res) => {
     const userId = req.params.userId;
