@@ -698,15 +698,33 @@ app.get("/compras/:userId", (req, res) => {
 });
 
 
-// Leer ventas para un usuario específico
 app.get("/ventas/:userId", (req, res) => {
     const userId = req.params.userId;
-    const query = 'SELECT * FROM Ventas WHERE user_id = ?';
+
+    // Validar si el userId es un número válido
+    if (!/^\d+$/.test(userId)) {
+        return res.status(400).json({ error: "El ID de usuario no es válido." });
+    }
+
+    // Definir la consulta con parámetros seguros
+    const query = "SELECT * FROM Ventas WHERE user_id = ?";
+
     conexion.query(query, [userId], (err, results) => {
-        if (err) return res.status(500).send('Error al obtener las ventas');
-        res.json(results);
+        if (err) {
+            console.error("Error al obtener las ventas:", err);
+            return res.status(500).json({ error: "Error interno del servidor." });
+        }
+
+        if (results.length === 0) {
+            // Si no se encuentran ventas, devolver un 404
+            return res.status(404).json({ message: "No se encontraron ventas para este usuario." });
+        }
+
+        // Devolver los resultados en formato JSON
+        res.status(200).json(results);
     });
 });
+
 
 // Ruta para eliminar una compra
 app.delete('/compras/:idCompra', (req, res) => {
