@@ -4,6 +4,7 @@ const app = express();
 const mysql = require('mysql');
 const md5 = require('md5');
 const cors = require('cors');
+const moment = require('moment'); // Usar moment.js para manejar fechas
 const { sendResetEmail } = require('./testEmail'); // Importa la función
 const { sendPurchaseConfirmationEmail } = require('./sendbuy'); // Importa la función
 const PORT = process.env.PORT || 5001;
@@ -550,32 +551,126 @@ app.put('/updateproductos', (req, res) => {
 
 
 
-// Ruta para agregar compras y ventas
-// Ruta para agregar una nueva compra
-app.post('/compras', (req, res) => {
-    const userId = req.body.userId;
-    const cantComprada = req.body.cantComprada;
-    const precio = req.body.precio;
-    const categoriaProduct = req.body.categoriaProduct;
-    const nameProduct = req.body.nameProduct;
-    const img1Product = req.body.img1Product;
-    const autor = req.body.autor;
-    const productoId = req.body.productoId;
-    const nameUser = req.body.nameUser;
-    const fechaCompra = req.body.fechaCompra;
+// Función para manejar lógica adicional al insertar en ventas
+const handleVentasTriggers = async (venta) => {
+    const {
+        userId,
+        nameUser,
+        productoId,
+        nameProduct,
+        img1Product,
+        cantComprada,
+        categoriaProduct,
+        autor,
+        fechaCompra,
+        precioProducto,
+        idVenta,
+    } = venta;
 
-    conexion.query('INSERT INTO Compras (user_id, cant_comprada, precio, categoria_product, name_product, img1Product, autor, producto_id, name_user, fecha_compra) VALUES (?,?,?,?,?,?,?,?,?,?)',
-        [userId, cantComprada, precio, categoriaProduct, nameProduct, img1Product, autor, productoId, nameUser, fechaCompra],
-        (err, result) => {
-            if (err) {
-                console.log(err);
-                res.status(500).send('Error al agregar la compra');
-            } else {
-                res.send("Compra agregada satisfactoriamente :))");
-            }
-        }
-    );
+    // Lógica para insertar en estadisticas
+    const queryEstadisticas = `
+        INSERT INTO estadisticas 
+        (user_id, user_name, id_product, nombre_product, img1_product, cant_vendida, categoria_product, author, fecha_venta, precio_gana, id_vent)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    const estadisticasValues = [
+        userId, nameUser, productoId, nameProduct, img1Product, cantComprada, 
+        categoriaProduct, autor, fechaCompra, precioProducto, idVenta
+    ];
+    await conexion.query(queryEstadisticas, estadisticasValues);
+
+    // Lógica para actualizar ganancias
+    const queryGanancias = `
+        INSERT INTO ganancias 
+        (id_produt, nombre_producto, mes, categoria, cantidad, ganancias)
+        VALUES (?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE 
+        cantidad = cantidad + VALUES(cantidad),
+        ganancias = ganancias + VALUES(ganancias)
+    `;
+    const gananciasValues = [
+        productoId, nameProduct, moment(fechaCompra).format('MMMM'), 
+        categoriaProduct, cantComprada, precioProducto
+    ];
+    await conexion.query(queryGanancias, gananciasValues);
+
+    // Lógica para actualizar productos_populares
+    const queryProductosPopulares = `
+        INSERT INTO productos_populares 
+        (id_produt, user_compra, nombre_producto, mes, categoria, cantidad, ganacias)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE 
+        cantidad = cantidad + VALUES(cantidad),
+        mes = VALUES(mes)
+    `;
+    const popularesValues = [
+        productoId, nameUser, nameProduct, moment(fechaCompra).format('MMMM'), 
+        categoriaProduct, cantComprada, precioProducto
+    ];
+    await conexion.query(queryProductosPopulares, popularesValues);
+
+    // // Lógica para actualizar ventas_mes
+    // const [totalVentasMes] = await conexion.query(`
+    //     SELECT SUM(precio_produt) AS totalGanancia, SUM(cant_comprada) AS totalCantidad
+    //     FROM ventas
+    //     WHERE MONTH(fecha_compra) = MONTH(?)
+    // `, [fechaCompra]);
+
+    // // Verificar si el resultado es un array y tiene al menos un elemento
+    // if (!Array.isArray(totalVentasMes) || totalVentasMes.length === 0) {
+    //     console.error('No se obtuvieron resultados para totalVentasMes.');
+    //     return;
+    // }
+
+    // console.log('Resultado de totalVentasMes:', totalVentasMes);
+
+    // const queryVentasMes = `
+    //     INSERT INTO ventas_mes 
+    //     (mes, categoria, cantidad, ganacias)
+    //     VALUES (?, ?, ?, ?)
+    //     ON DUPLICATE KEY UPDATE 
+    //     cantidad = VALUES(cantidad),
+    //     ganacias = VALUES(ganacias)
+    // `;
+    // const ventasMesValues = [
+    //     moment(fechaCompra).format('MMMM'), categoriaProduct, 
+    //     totalVentasMes[0].totalCantidad || 0, totalVentasMes[0].totalGanancia || 0
+    // ];
+
+    // await conexion.query(queryVentasMes, ventasMesValues);
+};
+
+// Ruta para agregar una nueva venta con lógica
+app.post('/addventa', async (req, res) => {
+    const venta = req.body;
+
+    try {
+        // Insertar la venta en la base de datos
+        const queryVenta = `
+            INSERT INTO ventas 
+            (user_id, cant_comprada, precio_produt, name_product, categoria_product, img1Product, autor, producto_id, name_user, fecha_compra, authorId) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        const ventaValues = [
+            venta.userId, venta.cantComprada, venta.precioProducto, venta.nameProduct, 
+            venta.categoriaProduct, venta.img1Product, venta.autor, venta.productoId, 
+            venta.nameUser, venta.fechaCompra, venta.autorId
+        ];
+        const result = await conexion.query(queryVenta, ventaValues);
+
+        // Ejecutar la lógica asociada a los triggers
+        venta.idVenta = result.insertId; // Capturar el ID de la venta recién insertada
+        await handleVentasTriggers(venta);
+
+        res.status(200).send('Venta agregada satisfactoriamente con lógica de triggers aplicada.');
+    } catch (err) {
+        console.error('Error en la inserción de venta:', err);
+        res.status(500).send('Error al agregar la venta con lógica.');
+    }
 });
+
+// Ruta para agregar compras ventas y clientes
+
 // Ruta para agregar un nuevo cliente
 app.post('/clientes', (req, res) => {
     const nameUser = req.body.nameUser;
@@ -657,32 +752,32 @@ app.post('/addcompra', (req, res) => {
             });
     });
 });
-app.post('/addventa', (req, res) => {
-    const userId = req.body.userId;
-    const autorId = req.body.autorId;  // Cambié 'authorId' a 'autorId' para que coincida con el nombre del cuerpo de la solicitud
-    const cantComprada = req.body.cantComprada;
-    const precioProducto = req.body.precioProducto;
-    const nameProduct = req.body.nameProduct;
-    const categoriaProduct = req.body.categoriaProduct;
-    const img1Product = req.body.img1Product;
-    const autor = req.body.autor;
-    const productoId = req.body.productoId;
-    const nameUser = req.body.nameUser;
-    const fechaCompra = req.body.fechaCompra;
+// app.post('/addventa', (req, res) => {
+//     const userId = req.body.userId;
+//     const autorId = req.body.autorId;  // Cambié 'authorId' a 'autorId' para que coincida con el nombre del cuerpo de la solicitud
+//     const cantComprada = req.body.cantComprada;
+//     const precioProducto = req.body.precioProducto;
+//     const nameProduct = req.body.nameProduct;
+//     const categoriaProduct = req.body.categoriaProduct;
+//     const img1Product = req.body.img1Product;
+//     const autor = req.body.autor;
+//     const productoId = req.body.productoId;
+//     const nameUser = req.body.nameUser;
+//     const fechaCompra = req.body.fechaCompra;
 
-    conexion.query(
-        'INSERT INTO ventas (user_id, cant_comprada, precio_produt, name_product, categoria_product, img1Product, autor, producto_id, name_user, fecha_compra, authorId) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
-        [userId, cantComprada, precioProducto, nameProduct, categoriaProduct, img1Product, autor, productoId, nameUser, fechaCompra, autorId],
-        (err, result) => {
-            if (err) {
-                console.log(err);
-                res.status(500).send('Error al agregar la venta');
-            } else {
-                res.send("Venta agregada satisfactoriamente :))");
-            }
-        }
-    );
-});
+//     conexion.query(
+//         'INSERT INTO ventas (user_id, cant_comprada, precio_produt, name_product, categoria_product, img1Product, autor, producto_id, name_user, fecha_compra, authorId) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+//         [userId, cantComprada, precioProducto, nameProduct, categoriaProduct, img1Product, autor, productoId, nameUser, fechaCompra, autorId],
+//         (err, result) => {
+//             if (err) {
+//                 console.log(err);
+//                 res.status(500).send('Error al agregar la venta');
+//             } else {
+//                 res.send("Venta agregada satisfactoriamente :))");
+//             }
+//         }
+//     );
+// });
 
 // Leer compras para un usuario específico
 app.get("/compras/:userId", (req, res) => {
