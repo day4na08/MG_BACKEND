@@ -379,7 +379,8 @@
       }
     }
   ],
-  "productos": [
+  // estadisticas
+  "productos": [ 
     {
       "id": "1",
       "nombre": "Sillón Relax",
@@ -399,6 +400,8 @@
       "unidades": 60
     }
   ],
+
+  // ganacias
   "ventas": {
     "categorias": [
       {
@@ -414,6 +417,9 @@
         "ventas": 90
       }
     ],
+
+    // ganancias
+    
     "ganancias": [
       {
         "mes": "Enero",

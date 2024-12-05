@@ -475,7 +475,76 @@ app.get("/Catalogo",(req,res)=>{
     )
 
 });
+app.get("/ganancias",(req,res)=>{
+    // CREATE TABLE `ganancias` (
+    //     `id_produt` int(11) NOT NULL,
+    //     `nombre_producto` varchar(100) DEFAULT NULL,
+    //     `mes` varchar(20) NOT NULL,
+    //     `categoria` varchar(50) DEFAULT NULL,
+    //     `cantidad` int(11) DEFAULT NULL,
+    //     `ganancias` decimal(10,2) DEFAULT NULL
+    //   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  
+    conexion.query('SELECT * FROM ganancias',
+        (err,result)=>{
+        if(err){
+        console.log(err);
+        }else{
+        res.send(result);
+    }
+    }
+    )
 
+});
+app.get("/estadisticas",(req,res)=>{
+    // CREATE TABLE `estadisticas` (
+    //     `id_estad` int(11) NOT NULL,
+    //     `user_id` int(11) NOT NULL,
+    //     `user_name` varchar(100) DEFAULT NULL,
+    //     `id_product` int(11) NOT NULL,
+    //     `nombre_product` varchar(100) DEFAULT NULL,
+    //     `img1_product` varchar(255) DEFAULT NULL,
+    //     `cant_vendida` int(11) NOT NULL,
+    //     `categoria_product` varchar(50) DEFAULT NULL,
+    //     `author` varchar(100) DEFAULT NULL,
+    //     `fecha_venta` date DEFAULT NULL,
+    //     `precio_gana` decimal(10,2) NOT NULL,
+    //     `id_vent` int(11) NOT NULL
+    //   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  
+    conexion.query('SELECT * FROM estadisticas',
+        (err,result)=>{
+        if(err){
+        console.log(err);
+        }else{
+        res.send(result);
+    }
+    }
+    )
+
+});
+app.get("/productos_populares",(req,res)=>{
+    // CREATE TABLE `productos_populares` (
+    //     `id_produt` int(11) NOT NULL,
+    //     `user_compra` varchar(100) DEFAULT NULL,
+    //     `nombre_producto` varchar(100) DEFAULT NULL,
+    //     `mes` varchar(20) DEFAULT NULL,
+    //     `categoria` varchar(50) DEFAULT NULL,
+    //     `cantidad` int(11) DEFAULT NULL,
+    //     `ganacias` decimal(10,2) DEFAULT NULL
+    //   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  
+    conexion.query('SELECT * FROM productos_populares',
+        (err,result)=>{
+        if(err){
+        console.log(err);
+        }else{
+        res.send(result);
+    }
+    }
+    )
+
+});
 //productdetail
 app.get("/llamarProducto/:id", (req, res) => {
     const id = req.params.id;
@@ -793,10 +862,10 @@ app.get("/compras/:userId", (req, res) => {
 });
 
 
-app.get("/ventas/:userId", (req, res) => {
-    const userId = req.params.userId;
-    const query = 'SELECT * FROM ventas WHERE user_id = ?';
-    conexion.query(query, [userId], (err, results) => {
+app.get("/ventas/:authorId", (req, res) => {
+    const authorId = req.params.authorId;
+    const query = 'SELECT * FROM ventas WHERE authorId = ?';
+    conexion.query(query, [authorId], (err, results) => {
         if (err) {
             console.error('Error en la consulta:', err);
             return res.status(500).json({ error: 'Error interno del servidor.' });
