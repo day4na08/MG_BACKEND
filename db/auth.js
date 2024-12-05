@@ -934,7 +934,7 @@ app.post('/passwordReset', async (req, res) => {
         }
 
         const token = md5(email + Date.now());
-        const resetLink = `http://localhost:3000/reset-password/${token}`;
+        const resetLink = `https://megamuebles.vercel.app/reset-password/${token}`;
 
         // Guardar el token en la base de datos
         const updateTokenQuery = 'UPDATE usuarios SET reset_token = ? WHERE email = ?';
